@@ -2,145 +2,147 @@
 #include <thread>
 #include <chrono>
 #include <string>
+using namespace std;
 
-class Microwave {
-private:
-    bool runningStatus;
-    bool doorStatus;
-    int pLevel;
-    int timeLeft;
-
-    std::string formatTime(int t) {
-        int mins = t / 60;
-        int secs = t % 60;
-        std::string result = std::to_string(mins) + ":";
-        if (secs < 10) result += "0";
-        result += std::to_string(secs);
-        return result;
+// Function to simulate typing effect
+void typeEffect(const string &text, int delay = 50) {
+    for (size_t i = 0; i < text.size(); ++i) {
+        cout << text[i];
+        cout.flush();
+        this_thread::sleep_for(chrono::milliseconds(delay));
     }
+}
+
+// Function to display banner
+void showBanner() {
+    // Display the main banner ASCII art
+    cout << "\n";
+    cout << " _   _ _   _ \n";
+    cout << "| \\ | | | | |\n";
+    cout << "|  \\| | | | |\n";
+    cout << "| |\\  | |_| |\n";
+    cout << "|_| \\_|\\___/ \n";
+    cout << "\n";
+    
+    // Display welcome message with extra spacing
+    cout << "\n";
+    cout << "          * Welcome to the NU SMART MICROWAVE Interface! *\n";
+    cout << "\n";
+}
+
+// Function to display menu options
+void showMenu() {
+    cout << "============================================================\n";
+    cout << "|                   Microwave Command List                 |\n";
+    cout << "============================================================\n";
+    cout << "|  [1] Start \"Keep Warm\" Function                          |\n";
+    cout << "|  [2] Set Custom \"Keep Warm\" Duration                     |\n";
+    cout << "|  [3] Stop \"Keep Warm\" Function                           |\n";
+    cout << "|  [4] Display Microwave Status                            |\n";
+    cout << "|  [5] Show Hacker Diagnostics                             |\n";
+    cout << "|  [6] Exit Microwave Interface                            |\n";
+    cout << "============================================================\n";
+}
+
+// Class for Microwave functionality
+class SmartMicrowave {
+private:
+    bool isKeepWarmActive;
+    int keepWarmDuration;  
+    int maxKeepWarmDuration;  
+    int elapsedMinutes;
+    const int safeTemperature;  
 
 public:
-    Microwave() {
-        runningStatus = false;
-        doorStatus = false;
-        pLevel = 10;
-        timeLeft = 0;
-    }
+    // Constructor with default values
+    SmartMicrowave()
+        : isKeepWarmActive(false), 
+          keepWarmDuration(30), 
+          maxKeepWarmDuration(180), 
+          elapsedMinutes(0), 
+          safeTemperature(165) {}
 
-    void openMicrowaveDoor() {
-        doorStatus = true;
-        if (runningStatus) {
-            stopMicrowave();
+    void startKeepWarm() {
+        isKeepWarmActive = true;
+        elapsedMinutes = 0;
+        typeEffect("[SYSTEM] Keep Warm function activated...\n");
+        cout << "Duration: " << keepWarmDuration << " minutes, Temperature: "
+             << safeTemperature << "°F.\n";
+        cout << "Maintaining food temperature...\n";
+        for (int i = 1; i <= keepWarmDuration; ++i) {
+            this_thread::sleep_for(chrono::milliseconds(100));  // Simulates 1 minute
+            if (i % 10 == 0) {
+                cout << "[+] Elapsed Time: " << i << " minutes.\n";
+            }
         }
-        std::cout << "Door is now open\n";
+        stopKeepWarm();
     }
 
-    void closeMicrowaveDoor() {
-        doorStatus = false;
-        std::cout << "Door is now closed\n";
+    void stopKeepWarm() {
+        isKeepWarmActive = false;
+        typeEffect("[SYSTEM] Keep Warm function terminated.\n");
+        cout << "Food was kept warm for " << elapsedMinutes << " minutes.\n";
     }
 
-    void setPower(int lvl) {
-        if (lvl > 10 || lvl < 1) {
-            std::cout << "Not a valid power level\n";
+    void setCustomDuration(int minutes) {
+        if (minutes > 0 && minutes <= maxKeepWarmDuration) {
+            keepWarmDuration = minutes;
+            typeEffect("[SYSTEM] Custom Keep Warm duration set successfully.\n");
+            cout << "New Duration: " << keepWarmDuration << " minutes.\n";
         } else {
-            pLevel = lvl;
-            std::cout << "Power is now set to: " << pLevel << "\n";
+            typeEffect("[ERROR] Invalid duration. Enter a value between 1 and "
+                       + to_string(maxKeepWarmDuration) + " minutes.\n");
         }
     }
 
-    void addCookTime(int t) {
-        if (runningStatus) {
-            timeLeft += t;
-        } else {
-            timeLeft = t;
-        }
-        std::cout << "Time set to " << formatTime(timeLeft) << "\n";
-    }
-
-    void quickCook() {
-        if (doorStatus == false) {
-            timeLeft = 30;
-            startMicrowave();
-        } else {
-            std::cout << "Close the door first!\n";
-        }
-    }
-
-    void startMicrowave() {
-        if (timeLeft <= 0) {
-            std::cout << "Set time first\n";
-            return;
-        }
-        if (doorStatus) {
-            std::cout << "Please shut the door first\n";
-            return;
-        }
-
-        runningStatus = true;
-        std::cout << "Starting microwave...\n";
-
-        while (timeLeft > 0 && runningStatus) {
-            std::cout << "\nMicrowave Info:\n";
-            std::cout << "Time left: " << formatTime(timeLeft) << "\n";
-            std::cout << "Power Level: " << pLevel << "\n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            timeLeft--;
-        }
-
-        if (timeLeft <= 0) {
-            std::cout << "\nDone! Beep! Beep!\n";
-            runningStatus = false;
-        }
-    }
-
-    void stopMicrowave() {
-        runningStatus = false;
-        std::cout << "Microwave stopped.\n";
+    void displayStatus() {
+        cout << "\n============================================================\n";
+        cout << "|                    Microwave Status                      |\n";
+        cout << "============================================================\n";
+        cout << "|  Keep Warm Status: " << (isKeepWarmActive ? "ACTIVE" : "INACTIVE") << "                   |\n";
+        cout << "|  Current Duration: " << keepWarmDuration << " minutes                 |\n";
+        cout << "|  Elapsed Time: " << elapsedMinutes << " minutes                     |\n";
+        cout << "============================================================\n";
     }
 };
 
 int main() {
-    Microwave mw;
-    std::string cmd;
+    SmartMicrowave microwave;
+    int choice, duration;
 
-    std::cout << "Microwave Simulator\n";
-    std::cout << "Type commands: open, close, power <1-10>, time <seconds>, start, stop, quick, quit\n";
+    showBanner();
 
-    while (1) {
-        std::cout << "> ";
-        std::getline(std::cin, cmd);
+    do {
+        showMenu();
+        cout << "Enter your command (e.g., 1, 2, 3): ";
+        cin >> choice;
 
-        if (cmd == "quit") {
-            break;
-        } else if (cmd == "open") {
-            mw.openMicrowaveDoor();
-        } else if (cmd == "close") {
-            mw.closeMicrowaveDoor();
-        } else if (cmd == "start") {
-            mw.startMicrowave();
-        } else if (cmd == "stop") {
-            mw.stopMicrowave();
-        } else if (cmd == "quick") {
-            mw.quickCook();
-        } else if (cmd.substr(0, 5) == "power") {
-            try {
-                int level = std::stoi(cmd.substr(6));
-                mw.setPower(level);
-            } catch (...) {
-                std::cout << "Error in power format\n";
-            }
-        } else if (cmd.substr(0, 4) == "time") {
-            try {
-                int sec = std::stoi(cmd.substr(5));
-                mw.addCookTime(sec);
-            } catch (...) {
-                std::cout << "Error in time format\n";
-            }
-        } else {
-            std::cout << "Unknown command\n";
+        switch (choice) {
+            case 1:
+                microwave.startKeepWarm();
+                break;
+            case 2:
+                cout << "Enter custom duration (minutes): ";
+                cin >> duration;
+                microwave.setCustomDuration(duration);
+                break;
+            case 3:
+                microwave.stopKeepWarm();
+                break;
+            case 4:
+                microwave.displayStatus();
+                break;
+            case 5:
+                typeEffect("[SYSTEM] Diagnostics Running...\n");
+                cout << "[+] All Systems Operational.\n";
+                break;
+            case 6:
+                typeEffect("[SYSTEM] Exiting Microwave Interface... Goodbye!\n");
+                break;
+            default:
+                typeEffect("[ERROR] Invalid command. Please try again.\n");
         }
-    }
+    } while (choice != 6);
 
     return 0;
 }

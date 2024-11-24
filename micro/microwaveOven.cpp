@@ -30,16 +30,16 @@ void showBanner() {
     cout << "\n";
 }
 
-// Function to display menu options
+// Function to display "Keep warm" menu options
 void showMenu() {
     cout << "============================================================\n";
     cout << "|                   Microwave Command List                 |\n";
     cout << "============================================================\n";
-    cout << "|  [1] Start \"Keep Warm\" Function                          |\n";
-    cout << "|  [2] Set Custom \"Keep Warm\" Duration                     |\n";
-    cout << "|  [3] Stop \"Keep Warm\" Function                           |\n";
+    cout << "|  [1] Start \"Keep Warm\" Function                        |\n";
+    cout << "|  [2] Set Custom \"Keep Warm\" Duration                   |\n";
+    cout << "|  [3] Stop \"Keep Warm\" Function                         |\n";
     cout << "|  [4] Display Microwave Status                            |\n";
-    cout << "|  [5] Show Oven Diagnostics                             |\n";
+    cout << "|  [5] Show Oven Diagnostics                               |\n";
     cout << "|  [6] Exit Microwave Interface                            |\n";
     cout << "============================================================\n";
 }
@@ -97,12 +97,12 @@ public:
 
     void displayStatus() {
         cout << "\n============================================================\n";
-        cout << "|                    Microwave Status                      |\n";
-        cout << "============================================================\n";
+        cout << "|                    Microwave Status                        |\n";
+        cout << "==============================================================\n";
         cout << "|  Keep Warm Status: " << (isKeepWarmActive ? "ACTIVE" : "INACTIVE") << "                   |\n";
         cout << "|  Current Duration: " << keepWarmDuration << " minutes                 |\n";
         cout << "|  Elapsed Time: " << elapsedMinutes << " minutes                     |\n";
-        cout << "============================================================\n";
+        cout << "==============================================================\n";
     }
 };
 

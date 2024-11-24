@@ -39,7 +39,7 @@ void showMenu() {
     cout << "|  [2] Set Custom \"Keep Warm\" Duration                     |\n";
     cout << "|  [3] Stop \"Keep Warm\" Function                           |\n";
     cout << "|  [4] Display Microwave Status                            |\n";
-    cout << "|  [5] Show Hacker Diagnostics                             |\n";
+    cout << "|  [5] Show Oven Diagnostics                             |\n";
     cout << "|  [6] Exit Microwave Interface                            |\n";
     cout << "============================================================\n";
 }
